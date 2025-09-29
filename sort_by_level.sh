@@ -21,7 +21,7 @@ for version_dir in "$ROOT_DIR"/*; do
         # Check if is dir
         [ -d "$song_dir" ] || continue
 
-        echo "Working on $version_dir/$song_dir"
+        echo "Working on $song_dir"
         maidata_file="$song_dir/maidata.txt"
         # Check if is file
         [ -f "$maidata_file" ] || continue
