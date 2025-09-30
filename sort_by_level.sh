@@ -1,43 +1,48 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Root directory containing all version folders
 ROOT_DIR="."
-OUTPUT_DIR="./output"
+OUTPUT_DIR="${ROOT_DIR}/output"
 
-# Detect if output dir exists;
-# if exists, mv it to output_bak<unix_time_stamp>
-if [ -d "$OUTPUT_DIR" ]; then
-    mv "$OUTPUT_DIR" "${OUTPUT_DIR}_bak$(date +%s)"
+# 1. make output dir available
+if [ -e "${OUTPUT_DIR}" ]; then
+    mv "${OUTPUT_DIR}" "${OUTPUT_DIR}_bak$(date +%s)"
+else
+    mkdir -p "${OUTPUT_DIR}"
 fi
-mkdir -p "$OUTPUT_DIR"
 
-for version_dir in "$ROOT_DIR"/*; do
-    # Check if is dir
-    [ -d "$version_dir" ] || continue
-    # Check if is output dir
-    [ "$(basename "$version_dir")" = "output" ] && continue
+# 2. get maidata paths
+for version_dir in "${ROOT_DIR}"/*; do
+    [ -d "${version_dir}" ] && \
+    [ "$(basename "${version_dir}")" != "output" ] || continue
 
-    for song_dir in "$version_dir"/*; do
-        # Check if is dir
-        [ -d "$song_dir" ] || continue
+    for song_dir in "${version_dir}"/*; do
+        [ -d "${song_dir}" ] # || exit 1
 
-        echo "Working on $version_dir/$song_dir"
-        maidata_file="$song_dir/maidata.txt"
-        # Check if is file
-        [ -f "$maidata_file" ] || continue
+        echo -n "$(basename "${song_dir}") "
+        maidata_file="${song_dir}/maidata.txt"
+        [ -f "${maidata_file}" ] # || exit 1
 
-        # Extract difficulty 2-6 (what is `&lv_1`???)
+        # 3. get rounded level
         for diff in 2 3 4 5 6; do
-            level=$(rg --pcre2 -o "(?<=^&lv_${diff}=)[0-9]+" "$maidata_file" 2>/dev/null || true)
-            if [ -z "$level" ]; then
-                continue
-            fi
-            if [ -n "$level" ]; then
-                mkdir -p "$OUTPUT_DIR/$level"
-                cp -r "$song_dir" "$OUTPUT_DIR/$level/"
-            fi
+            leveln=$(rg --pcre2 -o "(?<=^&lv_${diff}=)[0-9.]+$" "${maidata_file}")
+            [ -n "${leveln}" ] # || exit 1
+            echo -n "${leveln} "
+            int=${leveln%.*}
+            frac=${leveln#*.}
+            case ${frac} in
+                [0-4]) level="${int}" ;;
+                [5-9]) level="${int}+" ;;
+                *) exit 1 ;;
+            esac
+
+            # 4. copy to destination
+            echo -n "${level}"
+            mkdir -p "${OUTPUT_DIR}/${level}"
+            cp -r "${song_dir}" "${OUTPUT_DIR}/${level}/"
+            echo "."
         done
     done
 done
 
-echo "Sorting complete. Check $OUTPUT_DIR/"
+echo "Sorting complete. Check ${OUTPUT_DIR}/"
