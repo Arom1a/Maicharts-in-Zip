@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
+set -euo pipefail
+rg || [ $? -ne 127 ]
 ROOT_DIR="."
 OUTPUT_DIR="${ROOT_DIR}/output"
 
