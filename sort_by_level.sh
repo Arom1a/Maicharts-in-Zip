@@ -8,9 +8,8 @@ OUTPUT_DIR="${ROOT_DIR}/output"
 # 1. make output dir available
 if [ -e "${OUTPUT_DIR}" ]; then
     mv "${OUTPUT_DIR}" "${OUTPUT_DIR}_bak$(date +%s)"
-else
-    mkdir -p "${OUTPUT_DIR}"
 fi
+mkdir -p "${OUTPUT_DIR}"
 
 # 2. get maidata paths
 for version_dir in "${ROOT_DIR}"/*; do
