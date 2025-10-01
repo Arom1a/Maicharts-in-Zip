@@ -44,11 +44,17 @@ for version_dir in "$ROOT_DIR"/*; do
                     fi
                 fi
             fi
-            echo $dest_level
 
             mkdir -p "$OUTPUT_DIR/$dest_level"
             cp -r "$song_dir" "$OUTPUT_DIR/$dest_level/"
         done
+
+        # handle Utage charts (`&lv_7`)
+        utage=$(rg --pcre2 -o "(?<=^&lv_7=).+" "$maidata_file" 2>/dev/null || true)
+        if [ -n "$utage" ]; then
+            mkdir -p "$OUTPUT_DIR/utage"
+            cp -r "$song_dir" "$OUTPUT_DIR/utage/"
+        fi
     done
 done
 
