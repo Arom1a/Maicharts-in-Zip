@@ -32,10 +32,22 @@ for version_dir in "$ROOT_DIR"/*; do
             if [ -z "$level" ]; then
                 continue
             fi
-            if [ -n "$level" ]; then
-                mkdir -p "$OUTPUT_DIR/$level"
-                cp -r "$song_dir" "$OUTPUT_DIR/$level/"
+
+            # handling 13+ and 14+
+            dest_level="$level"
+            if [ "$level" = "13" ] || [ "$level" = "14" ]; then
+                decimal=$(rg --pcre2 -o "(?<=^&lv_${diff}=${level}\.)[0-9]+" "$maidata_file" 2>/dev/null || true)
+                if [ -n "$decimal" ]; then
+                    first_decimal_digit="${decimal:0:1}"
+                    if [ "$first_decimal_digit" -ge 6 ] 2>/dev/null; then
+                        dest_level="${level}+"
+                    fi
+                fi
             fi
+            echo $dest_level
+
+            mkdir -p "$OUTPUT_DIR/$dest_level"
+            cp -r "$song_dir" "$OUTPUT_DIR/$dest_level/"
         done
     done
 done
