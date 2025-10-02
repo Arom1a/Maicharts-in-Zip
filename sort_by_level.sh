@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if ! command -v rgasadf >/dev/null 2>&1; then
+if ! command -v rg >/dev/null 2>&1; then
     echo "Error: \`rg\` (ripgrep) is required but not installed." >&2
     exit 1
 fi
