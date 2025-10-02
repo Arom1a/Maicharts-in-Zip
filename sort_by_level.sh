@@ -37,6 +37,11 @@ for version_dir in "$ROOT_DIR"/*; do
             if [ -z "$level" ]; then
                 continue
             fi
+            # Skip if level is less than 12
+            if [ "$level" -lt 12 ]; then
+                continue
+            fi
+
 
             # handling 13+ and 14+
             dest_level="$level"
