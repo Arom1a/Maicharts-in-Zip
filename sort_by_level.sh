@@ -41,6 +41,10 @@ for version_dir in "$ROOT_DIR"/*; do
             if [ "$level" -lt 12 ]; then
                 continue
             fi
+            # Skip if level is greater than 12, uncomment to use
+            # if [ "$level" -gt 12 ]; then
+            #     continue
+            # fi
 
 
             # handling 13+ and 14+
@@ -60,11 +64,12 @@ for version_dir in "$ROOT_DIR"/*; do
         done
 
         # handle Utage charts (`&lv_7`)
-        utage=$(rg --pcre2 -o "(?<=^&lv_7=).+" "$maidata_file" 2>/dev/null || true)
-        if [ -n "$utage" ]; then
-            mkdir -p "$OUTPUT_DIR/utage"
-            cp -r "$song_dir" "$OUTPUT_DIR/utage/"
-        fi
+        # ignore by default, uncomment to sort
+        # utage=$(rg --pcre2 -o "(?<=^&lv_7=).+" "$maidata_file" 2>/dev/null || true)
+        # if [ -n "$utage" ]; then
+        #     mkdir -p "$OUTPUT_DIR/utage"
+        #     cp -r "$song_dir" "$OUTPUT_DIR/utage/"
+        # fi
     done
 done
 
