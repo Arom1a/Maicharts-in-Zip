@@ -26,8 +26,8 @@ for version_dir in "${ROOT_DIR}"/*; do
     [ "$(basename "${version_dir}")" != "output" ] || continue
 
     # Loop for song_dir
-    for song_dir in "$version_dir"/*; do
-        [ -d "$song_dir" ] # we should fail this because it's impossible
+    for song_dir in "${version_dir}"/*; do
+        [ -d "${song_dir}" ] # we should fail this because it's impossible
 
         # Get maidata.txt
         echo -n "$(basename "${song_dir}") " # "name "
@@ -65,4 +65,4 @@ for version_dir in "${ROOT_DIR}"/*; do
     done
 done
 
-echo "Sorting complete. Check $OUTPUT_DIR/"
+echo "Sorting complete. Check ${OUTPUT_DIR}/"
